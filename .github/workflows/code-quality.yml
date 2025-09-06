@@ -57,5 +57,5 @@ jobs:
     - name: Run PHPStan on changed files
       if: steps.changed-files.outputs.any_changed == 'true'
       run: |
-        # PHPStan'ı sadece değişen dosyalarda çalıştır
+        # Run PHPStan only on changed files
         ./vendor/bin/phpstan analyse ${{ steps.changed-files.outputs.all_changed_files }} --no-progress --error-format=github
