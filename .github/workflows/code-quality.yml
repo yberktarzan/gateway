@@ -51,7 +51,7 @@ jobs:
         echo "Changed PHP files:"
         echo "${{ steps.changed-files.outputs.all_changed_files }}"
         
-        # Pint'i sadece değişen dosyalarda çalıştır
+        # Run Pint only on changed files
         ./vendor/bin/pint ${{ steps.changed-files.outputs.all_changed_files }} --test
         
     - name: Run PHPStan on changed files
