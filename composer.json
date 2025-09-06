@@ -77,6 +77,23 @@
         "quality-fix": [
             "@pint",
             "@phpstan"
+        ],
+        "commit-help": [
+            "echo 'Semantic Commit Examples:'",
+            "echo '  feat(auth): add login endpoint'",
+            "echo '  fix: resolve memory leak in parser'",
+            "echo '  docs(api): update authentication guide'",
+            "echo '  style: format code with prettier'",
+            "echo '  refactor(user): simplify validation logic'",
+            "echo ''",
+            "echo 'Available types: feat, fix, docs, style, refactor, test, chore, perf, ci, build, revert'"
+        ],
+        "install-hooks": [
+            "./scripts/install-hooks.sh"
+        ],
+        "setup": [
+            "@install-hooks",
+            "echo '🎉 Project setup complete! Ready to develop.'"
         ]
     },
     "extra": {
