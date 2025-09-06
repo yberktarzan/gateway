@@ -1,11 +1,13 @@
 {
     "$schema": "https://getcomposer.org/schema.json",
-    "name": "laravel/laravel",
+    "name": "yberktarzan/gateway",
     "type": "project",
-    "description": "The skeleton application for the Laravel framework.",
+    "description": "API Gateway application built with Laravel framework.",
     "keywords": [
         "laravel",
-        "framework"
+        "api",
+        "gateway",
+        "microservices"
     ],
     "license": "MIT",
     "require": {
@@ -40,7 +42,7 @@
             "@php artisan package:discover --ansi"
         ],
         "post-update-cmd": [
-            "@php artisan vendor:publish --tag=laravel-assets --ansi --force"
+            "@php artisan optimize:clear --ansi"
         ],
         "post-root-package-install": [
             "@php -r \"file_exists('.env') || copy('.env.example', '.env');\""
@@ -52,7 +54,7 @@
         ],
         "dev": [
             "Composer\\Config::disableProcessTimeout",
-            "npx concurrently -c \"#93c5fd,#c4b5fd,#fb7185,#fdba74\" \"php artisan serve\" \"php artisan queue:listen --tries=1\" \"php artisan pail --timeout=0\" \"npm run dev\" --names=server,queue,logs,vite --kill-others"
+            "php artisan serve"
         ],
         "test": [
             "@php artisan config:clear --ansi",
