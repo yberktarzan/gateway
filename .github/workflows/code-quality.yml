@@ -10,6 +10,7 @@ jobs:
   code-quality:
     runs-on: ubuntu-latest
     
+    
     steps:
     - name: Checkout code
       uses: actions/checkout@v4
@@ -60,21 +61,3 @@ jobs:
       run: |
         # PHPStan'ı sadece değişen dosyalarda çalıştır
         ./vendor/bin/phpstan analyse ${{ steps.changed-files.outputs.all_changed_files }} --no-progress --error-format=github
-        
-    - name: Auto-fix with Pint (if not in PR)
-      if: |
-        steps.changed-files.outputs.any_changed == 'true' && 
-        github.event_name == 'push' && 
-        github.ref != 'refs/heads/main'
-      run: |
-        # Pint ile otomatik düzeltme yap (sadece push'larda, main branch hariç)
-        ./vendor/bin/pint ${{ steps.changed-files.outputs.all_changed_files }}
-        
-        # Eğer değişiklik varsa commit et
-        if [[ -n $(git status --porcelain) ]]; then
-          git config --local user.email "action@github.com"
-          git config --local user.name "GitHub Action"
-          git add .
-          git commit -m "style: auto-fix code style with Pint [skip ci]"
-          git push
-        fi
