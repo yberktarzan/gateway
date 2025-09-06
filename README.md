@@ -38,44 +38,74 @@ composer quality-fix       # Run pint (with fixes) and phpstan
 
 The project includes pre-commit hooks that automatically run Pint and PHPStan on staged files before each commit, ensuring code quality is maintained.
 
+## Semantic Commits
+
+This project enforces [Conventional Commits](https://www.conventionalcommits.org/) specification:
+
+### Format
+```
+<type>[optional scope]: <description>
+```
+
+### Available Types
+- `feat`: A new feature
+- `fix`: A bug fix  
+- `docs`: Documentation only changes
+- `style`: Code style changes (formatting, etc)
+- `refactor`: Code refactoring
+- `test`: Adding or updating tests
+- `chore`: Maintenance tasks
+- `perf`: Performance improvements
+- `ci`: CI/CD changes
+- `build`: Build system changes
+- `revert`: Revert previous commit
+
+### Examples
+```bash
+feat(auth): add JWT authentication
+fix: resolve memory leak in parser
+docs(api): update endpoint documentation
+style: format code with Pint
+refactor(user): simplify validation logic
+```
+
+### Rules
+- Description must be 1-50 characters
+- Use lowercase for description
+- Use imperative mood (add, not added)
+- No period at the end
+
+```bash
+# Get commit examples
+composer commit-help
+```
+
 ## Development
 
+### Initial Setup
+```bash
+# Clone the repository
+git clone https://github.com/yberktarzan/gateway.git
+cd gateway
+
+# Install dependencies
+composer install
+
+# Setup Git hooks and project
+composer setup
+```
+
+### Available Commands
 ```bash
 # Start development server
 composer dev
 
 # Run tests
 composer test
+
+# Install/reinstall Git hooks
+composer install-hooks
 ```
-
-Laravel is accessible, powerful, and provides tools required for large, robust applications.
-
-## Learning Laravel
-
-Laravel has the most extensive and thorough [documentation](https://laravel.com/docs) and video tutorial library of all modern web application frameworks, making it a breeze to get started with the framework.
-
-You may also try the [Laravel Bootcamp](https://bootcamp.laravel.com), where you will be guided through building a modern Laravel application from scratch.
-
-If you don't feel like reading, [Laracasts](https://laracasts.com) can help. Laracasts contains thousands of video tutorials on a range of topics including Laravel, modern PHP, unit testing, and JavaScript. Boost your skills by digging into our comprehensive video library.
-
-## Laravel Sponsors
-
-We would like to extend our thanks to the following sponsors for funding Laravel development. If you are interested in becoming a sponsor, please visit the [Laravel Partners program](https://partners.laravel.com).
-
-### Premium Partners
-
-- **[Vehikl](https://vehikl.com)**
-- **[Tighten Co.](https://tighten.co)**
-- **[Kirschbaum Development Group](https://kirschbaumdevelopment.com)**
-- **[64 Robots](https://64robots.com)**
-- **[Curotec](https://www.curotec.com/services/technologies/laravel)**
-- **[DevSquad](https://devsquad.com/hire-laravel-developers)**
-- **[Redberry](https://redberry.international/laravel-development)**
-- **[Active Logic](https://activelogic.com)**
-
-## Contributing
-
-Thank you for considering contributing to the Laravel framework! The contribution guide can be found in the [Laravel documentation](https://laravel.com/docs/contributions).
 
 ## Code of Conduct
 

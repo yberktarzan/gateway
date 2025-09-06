@@ -1,0 +1,55 @@
+#!/bin/sh
+
+# Commit message validation for Conventional Commits
+
+commit_regex='^(feat|fix|docs|style|refactor|test|chore|perf|ci|build|revert)(\(.+\))?: .{1,50}$'
+
+# Get the commit message
+commit_message=$(cat "$1")
+
+# Check if commit message matches the pattern
+if ! echo "$commit_message" | grep -qE "$commit_regex"; then
+    echo "❌ Invalid commit message format!"
+    echo ""
+    echo "Commit message must follow Conventional Commits format:"
+    echo "<type>[optional scope]: <description>"
+    echo ""
+    echo "Types:"
+    echo "  feat:     A new feature"
+    echo "  fix:      A bug fix"
+    echo "  docs:     Documentation only changes"
+    echo "  style:    Changes that do not affect the meaning of the code"
+    echo "  refactor: A code change that neither fixes a bug nor adds a feature"
+    echo "  test:     Adding missing tests or correcting existing tests"
+    echo "  chore:    Changes to the build process or auxiliary tools"
+    echo "  perf:     A code change that improves performance"
+    echo "  ci:       Changes to CI configuration files and scripts"
+    echo "  build:    Changes that affect the build system or dependencies"
+    echo "  revert:   Reverts a previous commit"
+    echo ""
+    echo "Examples:"
+    echo "  ✅ feat(auth): add login endpoint"
+    echo "  ✅ fix: resolve memory leak in parser"
+    echo "  ✅ docs(api): update authentication guide"
+    echo "  ✅ style: format code with prettier"
+    echo "  ✅ refactor(user): simplify validation logic"
+    echo ""
+    echo "Rules:"
+    echo "- Description must be 1-50 characters"
+    echo "- Use lowercase for description"
+    echo "- No period at the end"
+    echo "- Use imperative mood (add, not added)"
+    echo ""
+    exit 1
+fi
+
+# Check if description is too long
+description=$(echo "$commit_message" | sed 's/^[^:]*: //')
+if [ ${#description} -gt 50 ]; then
+    echo "❌ Description too long! Maximum 50 characters, got ${#description}."
+    echo "Description: $description"
+    exit 1
+fi
+
+echo "✅ Commit message format is valid!"
+exit 0

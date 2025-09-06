@@ -1,0 +1,36 @@
+#!/bin/sh
+
+# Pre-commit hook for running Pint and PHPStan on staged files
+
+# Get list of staged PHP files
+STAGED_FILES=$(git diff --cached --name-only --diff-filter=ACM | grep "\.php$" | grep -v vendor/)
+
+if [ -z "$STAGED_FILES" ]; then
+    echo "No PHP files staged for commit."
+    exit 0
+fi
+
+echo "Running code quality checks on staged files..."
+echo "Staged PHP files:"
+echo "$STAGED_FILES"
+
+# Run Pint on staged files
+echo "Running Pint..."
+./vendor/bin/pint $STAGED_FILES --test
+
+if [ $? -ne 0 ]; then
+    echo "❌ Pint check failed! Please run 'composer pint' to fix formatting issues."
+    exit 1
+fi
+
+# Run PHPStan on staged files
+echo "Running PHPStan..."
+./vendor/bin/phpstan analyse $STAGED_FILES --no-progress
+
+if [ $? -ne 0 ]; then
+    echo "❌ PHPStan analysis failed! Please fix the issues before committing."
+    exit 1
+fi
+
+echo "✅ All code quality checks passed!"
+exit 0
