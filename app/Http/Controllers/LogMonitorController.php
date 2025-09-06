@@ -44,7 +44,7 @@ class LogMonitorController extends Controller
             return $this->successResponse([
                 'logs' => $logs->values(),
                 'count' => $logs->count(),
-                'fallback_mode' => !$this->isElasticsearchAvailable(),
+                'fallback_mode' => ! $this->isElasticsearchAvailable(),
             ], shouldLog: false);
         } catch (Throwable $e) {
             return $this->errorResponse('Failed to fetch logs', 500, [
@@ -70,7 +70,7 @@ class LogMonitorController extends Controller
     {
         try {
             $level = $request->get('level', 'info');
-            $message = "Test {$level} log created at " . now()->format('H:i:s');
+            $message = "Test {$level} log created at ".now()->format('H:i:s');
 
             $context = [
                 'domain' => 'monitor',
@@ -172,7 +172,7 @@ class LogMonitorController extends Controller
             ->timeout(config('api.elasticsearch.timeout', 3))
             ->post("{$host}/{$index}/_search", $query);
 
-        if (!$response->successful()) {
+        if (! $response->successful()) {
             throw new \Exception('Elasticsearch query failed');
         }
 
@@ -181,16 +181,17 @@ class LogMonitorController extends Controller
 
         return collect($hits)->map(function ($hit) {
             $source = $hit['_source'];
+
             return [
                 'id' => $hit['_id'],
                 'timestamp' => $source['timestamp'],
                 'level' => $source['level'],
-                'level_name' => __('logging.levels.' . $source['level'], [], 'tr'),
+                'level_name' => __('logging.levels.'.$source['level'], [], 'tr'),
                 'message' => $source['message'],
                 'domain' => $source['domain'] ?? null,
-                'domain_name' => $source['domain'] ? __('logging.domains.' . $source['domain'], [], 'tr') : null,
+                'domain_name' => $source['domain'] ? __('logging.domains.'.$source['domain'], [], 'tr') : null,
                 'action' => $source['action'] ?? null,
-                'action_name' => $source['action'] ? __('logging.actions.' . $source['action'], [], 'tr') : null,
+                'action_name' => $source['action'] ? __('logging.actions.'.$source['action'], [], 'tr') : null,
                 'app' => $source['app'] ?? 'Laravel',
                 'env' => $source['env'] ?? 'local',
                 'http' => $source['http'] ?? [],
@@ -232,7 +233,7 @@ class LogMonitorController extends Controller
                 }
 
                 $parsed = $this->parseLogLine($line);
-                if (!$parsed) {
+                if (! $parsed) {
                     continue;
                 }
 
@@ -249,7 +250,7 @@ class LogMonitorController extends Controller
                     continue;
                 }
 
-                if ($search && !str_contains(strtolower($parsed['message'] . ' ' . json_encode($parsed['context'])), strtolower($search))) {
+                if ($search && ! str_contains(strtolower($parsed['message'].' '.json_encode($parsed['context'])), strtolower($search))) {
                     continue;
                 }
 
@@ -267,7 +268,7 @@ class LogMonitorController extends Controller
     private function parseLogLine(string $line): ?array
     {
         // Parse Laravel log format: [2025-09-06 15:43:29] local.INFO: [ELASTIC] Message {"json":"data"}
-        if (!preg_match('/^\[([^\]]+)\]\s+(\w+)\.(\w+):\s+(.+)$/', $line, $matches)) {
+        if (! preg_match('/^\[([^\]]+)\]\s+(\w+)\.(\w+):\s+(.+)$/', $line, $matches)) {
             return null;
         }
 
@@ -294,12 +295,12 @@ class LogMonitorController extends Controller
             'id' => md5($line),
             'timestamp' => Carbon::parse($timestamp)->toISOString(),
             'level' => $level,
-            'level_name' => __('logging.levels.' . $level, [], 'tr'),
+            'level_name' => __('logging.levels.'.$level, [], 'tr'),
             'message' => $message,
             'domain' => $contextData['domain'] ?? null,
-            'domain_name' => isset($contextData['domain']) ? __('logging.domains.' . $contextData['domain'], [], 'tr') : null,
+            'domain_name' => isset($contextData['domain']) ? __('logging.domains.'.$contextData['domain'], [], 'tr') : null,
             'action' => $contextData['action'] ?? null,
-            'action_name' => isset($contextData['action']) ? __('logging.actions.' . $contextData['action'], [], 'tr') : null,
+            'action_name' => isset($contextData['action']) ? __('logging.actions.'.$contextData['action'], [], 'tr') : null,
             'app' => $contextData['app'] ?? 'Laravel',
             'env' => $env,
             'http' => $contextData['http'] ?? [],
@@ -342,7 +343,7 @@ class LogMonitorController extends Controller
             ->timeout(config('api.elasticsearch.timeout', 3))
             ->post("{$host}/{$index}/_search", $query);
 
-        if (!$response->successful()) {
+        if (! $response->successful()) {
             throw new \Exception('Elasticsearch aggregation failed');
         }
 
@@ -371,7 +372,7 @@ class LogMonitorController extends Controller
 
             foreach ($lines as $line) {
                 $parsed = $this->parseLogLine($line);
-                if (!$parsed) {
+                if (! $parsed) {
                     continue;
                 }
 
@@ -394,7 +395,7 @@ class LogMonitorController extends Controller
 
     private function isElasticsearchAvailable(): bool
     {
-        if (!config('api.elasticsearch.enabled', true)) {
+        if (! config('api.elasticsearch.enabled', true)) {
             return false;
         }
 

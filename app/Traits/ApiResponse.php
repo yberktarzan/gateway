@@ -23,17 +23,17 @@ trait ApiResponse
      * Check if logging should be enabled for a specific response type.
      *
      * @param  string  $responseType  Type of response (success, error, validation, etc.)
-     * @param  bool  $shouldLog  Manual override for logging
+     * @param  bool|null  $shouldLog  Manual override for logging
      * @return bool Whether logging should be enabled
      */
-    private function shouldLogResponse(string $responseType, bool $shouldLog = false): bool
+    private function shouldLogResponse(string $responseType, ?bool $shouldLog = null): bool
     {
         // Manuel override varsa öncelik tanı
         if ($shouldLog === false) {
             return false;
         }
-        
-        if (!config('api.log_responses', true)) {
+
+        if (! config('api.log_responses', true)) {
             return false;
         }
 
@@ -76,7 +76,7 @@ trait ApiResponse
             $responseData['data'] = $data;
         }
 
-        if (!$success && !empty($errors)) {
+        if (! $success && ! empty($errors)) {
             $responseData['errors'] = $errors;
         }
 

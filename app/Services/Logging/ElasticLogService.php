@@ -32,7 +32,7 @@ class ElasticLogService
 
     public function log(string $level, string $message, array $context = []): void
     {
-        if (!$this->shouldLog($level, $context)) {
+        if (! $this->shouldLog($level, $context)) {
             return;
         }
 
@@ -64,16 +64,16 @@ class ElasticLogService
     private function sendToElasticsearch(array $document): bool
     {
         try {
-            if (!config('api.elasticsearch.enabled', true)) {
+            if (! config('api.elasticsearch.enabled', true)) {
                 return false;
             }
 
             $host = config('api.elasticsearch.host', 'http://localhost:9200');
-            $index = config('api.elasticsearch.index', 'gateway-logs-' . now()->format('Y.m.d'));
+            $index = config('api.elasticsearch.index', 'gateway-logs-'.now()->format('Y.m.d'));
             $timeout = (int) config('api.elasticsearch.timeout', 3);
 
             // Health check first
-            if (!$this->isElasticsearchHealthy($host, $timeout)) {
+            if (! $this->isElasticsearchHealthy($host, $timeout)) {
                 return false;
             }
 
@@ -85,6 +85,7 @@ class ElasticLogService
             return $response->successful();
         } catch (Throwable $e) {
             Log::debug('Elasticsearch send failed', ['error' => $e->getMessage()]);
+
             return false;
         }
     }
@@ -96,14 +97,16 @@ class ElasticLogService
                 ->timeout($timeout)
                 ->get("{$host}/_cluster/health");
 
-            if (!$response->successful()) {
+            if (! $response->successful()) {
                 return false;
             }
 
             $health = $response->json();
+
             return isset($health['status']) && in_array($health['status'], ['green', 'yellow']);
         } catch (Throwable $e) {
             Log::debug('Elasticsearch health check failed', ['error' => $e->getMessage()]);
+
             return false;
         }
     }
@@ -171,7 +174,7 @@ class ElasticLogService
     {
         $userId = request()->header('X-User-Id');
 
-        if (!$userId) {
+        if (! $userId) {
             return [];
         }
 
@@ -186,7 +189,7 @@ class ElasticLogService
 
     private function buildExceptionContext(?Throwable $exception): ?array
     {
-        if (!$exception) {
+        if (! $exception) {
             return null;
         }
 
@@ -195,7 +198,7 @@ class ElasticLogService
             ->map(fn ($frame) => [
                 'file' => $frame['file'] ?? 'unknown',
                 'line' => $frame['line'] ?? 0,
-                'function' => $frame['function'] ?? 'unknown',
+                'function' => $frame['function'],
                 'class' => $frame['class'] ?? null,
             ])
             ->toArray();
@@ -203,7 +206,7 @@ class ElasticLogService
         return [
             'class' => get_class($exception),
             'code' => $exception->getCode(),
-            'file' => $exception->getFile() . ':' . $exception->getLine(),
+            'file' => $exception->getFile().':'.$exception->getLine(),
             'trace' => $trace,
         ];
     }
