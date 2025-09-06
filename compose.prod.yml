@@ -1,0 +1,79 @@
+name: ${COMPOSE_PROJECT_NAME:-laravel-gateway}
+
+services:
+  app:
+    build:
+      context: .
+      dockerfile: docker/php/Dockerfile
+      target: runtime
+      args:
+        USER_ID: ${USER_ID:-1000}
+        GROUP_ID: ${GROUP_ID:-1000}
+    environment:
+      APP_ENV: production
+      APP_DEBUG: "false"
+      REDIS_HOST: ${REDIS_HOST:-redis}
+      REDIS_PORT: ${REDIS_PORT:-6379}
+      TZ: ${TZ:-Europe/Istanbul}
+    healthcheck:
+      test: ["CMD", "cgi-fcgi", "-bind", "-connect", "127.0.0.1:9000", "-ping", "-path", "/ping"]
+      interval: 10s
+      timeout: 2s
+      retries: 10
+    networks: [mesh]
+
+  web:
+    build:
+      context: .
+      dockerfile: docker/nginx/Dockerfile
+    depends_on: [app]
+    ports:
+      - "${PROD_HTTP_PORT:-8080}:80"
+    healthcheck:
+      test: ["CMD", "wget", "-qO", "-", "http://localhost/"]
+      interval: 10s
+      timeout: 3s
+      retries: 10
+    networks: [mesh]
+
+  redis:
+    image: redis:7-alpine
+    command: ["redis-server","--appendonly","${REDIS_AOF:-yes}"]
+    volumes:
+      - redisdata:/data
+    networks: [mesh]
+
+  worker:
+    build:
+      context: .
+      dockerfile: docker/php/Dockerfile
+      target: worker
+      args:
+        USER_ID: ${USER_ID:-1000}
+        GROUP_ID: ${GROUP_ID:-1000}
+    environment:
+      REDIS_HOST: ${REDIS_HOST:-redis}
+      REDIS_PORT: ${REDIS_PORT:-6379}
+    depends_on: [app, redis]
+    restart: unless-stopped
+    networks: [mesh]
+
+  scheduler:
+    build:
+      context: .
+      dockerfile: docker/php/Dockerfile
+      target: scheduler
+      args:
+        USER_ID: ${USER_ID:-1000}
+        GROUP_ID: ${GROUP_ID:-1000}
+    depends_on: [app]
+    restart: unless-stopped
+    networks: [mesh]
+
+volumes:
+  redisdata:
+
+networks:
+  mesh:
+    name: ${MESH_NETWORK:-mesh}
+    external: true

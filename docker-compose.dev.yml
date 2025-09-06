@@ -1,0 +1,32 @@
+name: ${COMPOSE_PROJECT_NAME:-laravel-gateway}
+
+services:
+  app:
+    build: .
+    ports:
+      - "8000:8000"
+    volumes:
+      - ./:/app:cached
+    environment:
+      APP_ENV: local
+      APP_DEBUG: "true"
+      REDIS_HOST: redis
+      REDIS_PORT: 6379
+    depends_on:
+      - redis
+
+  redis:
+    image: redis:7-alpine
+    ports:
+      - "6379:6379"
+
+  # Uncomment when you have background jobs
+  # worker:
+  #   build: .
+  #   command: php artisan queue:work redis --sleep=3 --tries=3
+  #   volumes:
+  #     - ./:/app:cached
+  #   depends_on:
+  #     - app
+  #     - redis
+  #   restart: unless-stopped
