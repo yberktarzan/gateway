@@ -12,8 +12,10 @@
     "license": "MIT",
     "require": {
         "php": "^8.2",
+        "elasticsearch/elasticsearch": "^9.1",
         "laravel/framework": "^12.0",
-        "laravel/tinker": "^2.10.1"
+        "laravel/tinker": "^2.10.1",
+        "monolog/monolog": "^3.9"
     },
     "require-dev": {
         "fakerphp/faker": "^1.23",
