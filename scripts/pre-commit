@@ -25,7 +25,7 @@ fi
 
 # Run PHPStan on staged files
 echo "Running PHPStan..."
-./vendor/bin/phpstan analyse $STAGED_FILES --no-progress
+./vendor/bin/phpstan analyse $STAGED_FILES --memory-limit=2G
 
 if [ $? -ne 0 ]; then
     echo "❌ PHPStan analysis failed! Please fix the issues before committing."
