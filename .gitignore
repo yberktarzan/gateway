@@ -31,3 +31,11 @@ auth.json
 .DS_Store
 .idea/
 .vscode/
+
+# Uploaded logos (user content)
+/public/logos/*
+!/public/logos/.gitkeep
+
+# Uploaded listing images (user content)
+/public/listings/*
+!/public/listings/.gitkeep

@@ -1,0 +1,2 @@
+# This file ensures the listings directory exists in git
+# Uploaded listing images will be stored here but ignored by git
